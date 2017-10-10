@@ -1,0 +1,3 @@
+#!/bin/bash
+export PYTHONPATH="/home/pedro/src/vimwn"
+/home/pedro/src/vimwn/bin/vimwn $@
