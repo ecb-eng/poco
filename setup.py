@@ -10,8 +10,5 @@ setup(name='vimwn',
 	url='https://github.com/pedrosans/vimwn',
 	lincense='GPL3',
 	packages=['vimwn'],
-	scripts=['bin/vimwn'],
-	data_files = [
-		('share/applications', ['data/vimwn.desktop']),
-	]
+	scripts=['bin/vimwn']
 )
