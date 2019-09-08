@@ -270,6 +270,7 @@ class WindowBtn(Gtk.Button):
 		self.connect("clicked", self.on_clicked)
 
 	def on_clicked(self, btn):
+		# TODO: remove
 		self.window.activate_transient(self.controller.get_current_event_time())
 
 
