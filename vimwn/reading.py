@@ -241,6 +241,12 @@ class Reading:
 		else:
 			self.set_key_mode(gtk_time, error_message='Not an editor command: ' + cmd)
 
+	def execute(self, cmd):
+		self.windows.read_screen()
+		command = Command.get_matching_command(cmd)
+		command_input = CommandInput(time=None, text=cmd).parse()
+		command.function(command_input)
+
 	#
 	# COMMANDS
 	#
