@@ -67,6 +67,10 @@ class LayoutManager:
 	def _state_changed(self, window, changed_mask, new_state):
 		if changed_mask & Wnck.WindowState.MINIMIZED:
 			self.windows.read_screen(force_update=False)
+			if window in self.windows.visible:
+				self.stack.insert(0, window.get_xid())
+			else:
+				self.stack.remove(window.get_xid())
 			self.layout()
 
 	def layout(self):
@@ -75,7 +79,6 @@ class LayoutManager:
 			if window.get_xid() not in self.window_monitor_map:
 				handler_id = window.connect("state-changed", self._state_changed)
 				self.window_monitor_map[window.get_xid()] = handler_id
-				print('monitor {}'.format(self.window_monitor_map))
 
 		w_stack = map(lambda x: self.windows.visible_map[x] if x in self.windows.visible_map else None, self.stack)
 		w_stack = filter(lambda x: x is not None, w_stack)
