@@ -21,12 +21,12 @@ def handle_event(event):
 
 def thread_function(name):
     global display,root
-    print("Thread %s: starting", name)
+    print("Thread {}: starting".format( name))
+    display.allow_events(X.AsyncKeyboard, X.CurrentTime)
     while 1:
         event = display.next_event()
         print("event")
         handle_event(event)
-        display.allow_events(X.AsyncKeyboard, X.CurrentTime)
     print("Thread %s: finishing", name)
 
 def main():

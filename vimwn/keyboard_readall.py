@@ -1,3 +1,4 @@
+import threading
 from Xlib import X
 from Xlib.ext import record
 from Xlib.display import Display
@@ -8,12 +9,12 @@ def handler(reply):
     data = reply.data
     while len(data):
         event, data = rq.EventField(None).parse_binary_value(data, display.display, None, None)
-        print event.detail
+        # print(event.detail)
 
         if event.type == X.KeyPress:
-            print 'pressed'
+            print('pressed {}'.format(event.detail))
         elif event.type == X.KeyRelease:
-            print 'released'
+            print('released {}'.format(event.detail))
 
 display = Display()
 context = display.record_create_context(0, [record.AllClients], [{
@@ -30,5 +31,11 @@ context = display.record_create_context(0, [record.AllClients], [{
 display.record_enable_context(context, handler)
 display.record_free_context(context)
 
-while True:
-    display.screen().root.display.next_event()
+def start_listening():
+    x = threading.Thread(target=listen, args=(1,))
+    x.setDaemon(True)
+    x.start()
+
+def listen(name):
+    while True:
+        display.screen().root.display.next_event()

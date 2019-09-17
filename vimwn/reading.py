@@ -140,6 +140,7 @@ class Reading:
 	def on_window_key(self, event):
 		ctrl = (event.state & Gdk.ModifierType.CONTROL_MASK)
 		key_name = Gdk.keyval_name(event.keyval)
+		print('key listened: {} {}'.format(key_name, ctrl))
 
 		if event.keyval == Gdk.KEY_Escape or (ctrl and event.keyval == Gdk.KEY_bracketleft):
 			self.escape(None)

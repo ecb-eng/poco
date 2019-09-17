@@ -16,6 +16,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import os, gi, dbus, dbus.service, signal, setproctitle, logging
+import vimwn.keyboard_readall
 gi.require_version('Gtk', '3.0')
 gi.require_version("Keybinder", "3.0")
 from vimwn.reading import Reading
@@ -61,17 +62,23 @@ class NavigatorService:
 		self.status_icon.reload()
 
 	def listen_user_events(self):
+		vimwn.keyboard_readall.start_listening()
+		print('listening started')
+
 		configurations = self.reading.configurations
 		normal_prefix = configurations.get_prefix_key()
 		Keybinder.init()
 
 		for hotkey in normal_prefix.split(","):
+			hotkey = '<ctrl>e'
 			if not Keybinder.bind(hotkey, self.handle_prefix_key, None):
 				raise Exception("Could not bind the hotkey: " + hotkey)
 
 		print("Listening keys: '{}', pid: {} ".format(normal_prefix, os.getpid()))
 
 	def handle_prefix_key(self, key, data):
+		bound = Keybinder.bind('l', self.handle_follow_up, key)
+		print('bound: {}'.format(bound))
 		self.reading.start(Keybinder.get_current_event_time())
 
 	def log_function(self, log_domain, log_level, message):
@@ -83,6 +90,10 @@ class NavigatorService:
 			self.reading.view.show_error(message)
 		else:
 			raise Exception(message)
+
+	def handle_follow_up(self, key, data):
+		print('followup: {} for: {}'.format(key, data))
+		Keybinder.unbind('l')
 
 	def configure_process(self):
 		setproctitle.setproctitle("vimwn")
