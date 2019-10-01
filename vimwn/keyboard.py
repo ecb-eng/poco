@@ -22,7 +22,6 @@ def handle_event(event):
 def thread_function(name):
     global display,root
     print("Thread {}: starting".format( name))
-    display.allow_events(X.AsyncKeyboard, X.CurrentTime)
     while 1:
         event = display.next_event()
         print("event")
@@ -38,7 +37,8 @@ def main():
     # we tell the X server we want to catch keyPress event
     root.change_attributes(event_mask = X.KeyPressMask|X.KeyReleaseMask)
     # just grab the "1"-key for now
-    root.grab_key(10, 0, True,X.GrabModeSync, X.GrabModeSync)
+    root.grab_key(104, 4, True,X.GrabModeAsync, X.GrabModeAsync)
+    root.grab_key(104, 4 | X.Mod2Mask, True,X.GrabModeAsync, X.GrabModeAsync)
 
     x = threading.Thread(target=thread_function, args=(1,))
     x.setDaemon(True)
