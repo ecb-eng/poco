@@ -80,6 +80,7 @@ class Serializer:
 		return None
 
 
+# TODO: the the window is maximized, the layout function fails
 class LayoutManager:
 
 	def __init__(self, windows, remove_decorations=False,  persistence_file='/tmp/vimify_windows_state.json'):

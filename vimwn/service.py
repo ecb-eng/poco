@@ -26,6 +26,7 @@ from vimwn.status import StatusIcon
 from vimwn.keyboard import KeyboardListener
 from vimwn.layout import LayoutManager
 from vimwn.environment import Configurations
+import vimwn.mapping as mappings
 
 SERVICE_NAME = "io.github.vimwn"
 SERVICE_OBJECT_PATH = "/io/github/vimwn"
@@ -74,20 +75,19 @@ class NavigatorService:
 		self.status_icon = None
 		self.listener = None
 		self.layout_manager = None
-		self.configurations = None
+		self.configurations = Configurations()
+		GObject.threads_init()
+		self.reading = Reading(service=self, configurations=self.configurations)
+		self.layout_manager = LayoutManager(
+			self.reading.windows, remove_decorations=self.configurations.is_remove_decorations())
 
 	def start(self):
 		# as soon as possible so new instances as notified
 		self.export_bus_object()
 		self.configure_process()
 
-		GObject.threads_init()
-
-		self.configurations = Configurations()
-		self.reading = Reading(service=self, configurations=self.configurations)
-		self.layout_manager = LayoutManager(self.reading.windows,
-												remove_decorations=self.configurations.is_remove_decorations())
 		normal_prefix = self.configurations.get_prefix_key()
+		mappings.install(normal_prefix, self.reading.windows, self.reading, self.layout_manager)
 		self.listener = KeyboardListener(unmapped_callback=self.on_x_key, on_error=self.keyboard_error)
 		self.listener.bind(normal_prefix, self.start_reading)
 		self.listener.bind('<Ctrl>Return', self.handle_layout)
